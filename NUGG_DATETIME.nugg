@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="utf-16"?>
+<nugget name="DATETIME">
+ <CLAS CLSNAME="ZCL_DATETIME" VERSION="1" LANGU="E" DESCRIPT="Datetime class" UUID="519C4F2D238168FCE10000000AF0C46A" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" AUTHOR="DKETTLE" CREATEDON="20101209" CHANGEDON="00000000" CHGDANYON="00000000" CLSCCINCL="X" FIXPT="X" UNICODE="X" R3RELEASE="731" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+  <publicSection>class ZCL_DATETIME definition
+  public
+  create public .
+
+*&quot;* public components of class ZCL_DATETIME
+*&quot;* do not include other source files here!!!
+public section.
+
+  class-data DATE_ATOM type CHAR20 value &apos;Y-m-d\TH:i:sP&apos;. &quot;#EC NOTEXT .  . &quot; .
+  class-data DATE_COOKIE type CHAR20 value &apos;l, d-M-y H:i:s T&apos;. &quot;#EC NOTEXT .  . &quot; .
+  class-data DATE_ISO8601 type CHAR20 value &apos;Y-m-d\TH:i:sO&apos;. &quot;#EC NOTEXT .  . &quot; .
+  class-data DATE_RFC822 type CHAR20 value &apos;D, d M y H:i:s O&apos;. &quot;#EC NOTEXT .  . &quot; .
+  class-data DATE_RFC850 type CHAR20 value &apos;l, d-M-y H:i:s T&apos;. &quot;#EC NOTEXT .  . &quot; .
+  class-data DATE_RFC1036 type CHAR20 value &apos;D, d M y H:i:s O&apos;. &quot;#EC NOTEXT .  . &quot; .
+  class-data DATE_RFC1123 type CHAR20 value &apos;D, d M Y H:i:s O&apos;. &quot;#EC NOTEXT .  . &quot; .
+  class-data DATE_RFC2822 type CHAR20 value &apos;D, d M Y H:i:s O&apos;. &quot;#EC NOTEXT .  . &quot; .
+  class-data DATE_RFC3339 type CHAR20 value &apos;Y-m-d\TH:i:sP&apos;. &quot;#EC NOTEXT .  . &quot; .
+  class-data DATE_RSS type CHAR20 value &apos;D, d M Y H:i:s O&apos;. &quot;#EC NOTEXT .  . &quot; .
+  class-data DATE_W3C type CHAR20 value &apos;Y-m-d\TH:i:sP&apos;. &quot;#EC NOTEXT .  . &quot; .
+
+  methods ADD .
+  methods CONSTRUCTOR
+    importing
+      !TIMESTAMP type TIMESTAMP optional
+      !TIMEZONE type TZNZONE optional .
+  methods CREATE_FROM_FORMAT .
+  methods DIFF .
+  methods FORMAT
+    importing
+      !FORMAT_MASK type CHAR20
+    returning
+      value(RETURN) type STRING .
+  methods GET_OFFSET .
+  methods GET_TIMESTAMP .
+  methods GET_TIMEZONE .
+  methods MODIFY .
+  methods SET_DATE
+    importing
+      !DATE type DATS .
+  methods SET_ISODATE .
+  methods SET_TIME
+    importing
+      !TIME type TIMS .
+  methods SET_TIMESTAMP
+    importing
+      !TIMESTAMP type TIMESTAMP optional .
+  methods SET_TIMEZONE
+    importing
+      !TIMEZONE type TZNZONE default &apos;UTC&apos; .
+  methods SUB .
+  methods GET_TIMEZONE_OFFSET
+    importing
+      !FORMAT_MASK type C default &apos;P&apos;
+    returning
+      value(RETURN) type STRING .</publicSection>
+  <protectedSection>*&quot;* protected components of class ZCL_DATETIME
+*&quot;* do not include other source files here!!!
+protected section.</protectedSection>
+  <privateSection>*&quot;* private components of class ZCL_DATETIME
+*&quot;* do not include other source files here!!!
+private section.
+
+  data _TZ type TZNZONE value &apos;UTC&apos;. &quot;#EC NOTEXT .  .  .  .  . &quot; .
+  data _TS type DT_SPLIT .
+  data _WEEK type NUM2 .
+  data _TIME type TIMS .
+  data _DATE type DATS .
+  data _TIMESTAMP type TIMESTAMPL .
+  data _FORMAT type CHAR20 .
+
+  methods GET_MONTH
+    importing
+      !IV_MONTH type ABSGR
+      !IV_CHARS type I default 3
+    returning
+      value(RV_MONTH) type STRING .
+  methods README .</privateSection>
+  <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+  <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature
+
+  types: begin of dt_split
+      , year(4) type n
+      , month(2) type n
+      , day(2) type n
+      , hour(2) type n
+      , min(2) type n
+      , sec(2) type n
+      , subsec(5) type n
+      , end of dt_split
+
+      .</localTypes>
+  <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+  <attribute CLSNAME="ZCL_DATETIME" CMPNAME="DATE_ATOM" VERSION="1" LANGU="E" DESCRIPT="Atom (example: 2005-08-15T15:52:01+00:00)" EXPOSURE="2" STATE="1" EDITORDER="7 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" ATTDECLTYP="1" ATTVALUE="&apos;Y-m-d\TH:i:sP&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="CHAR20" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " R3RELEASE="731" TYPESRC_LENG="0 "/>
+  <attribute CLSNAME="ZCL_DATETIME" CMPNAME="DATE_COOKIE" VERSION="1" LANGU="E" DESCRIPT="HTTP Cookies (example: Monday, 15-Aug-05 15:52:01 UTC)" EXPOSURE="2" STATE="1" EDITORDER="8 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" ATTDECLTYP="1" ATTVALUE="&apos;l, d-M-y H:i:s T&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="CHAR20" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " R3RELEASE="731" TYPESRC_LENG="0 "/>
+  <attribute CLSNAME="ZCL_DATETIME" CMPNAME="DATE_ISO8601" VERSION="1" LANGU="E" DESCRIPT="ISO-8601 (example: 2005-08-15T15:52:01+0000)" EXPOSURE="2" STATE="1" EDITORDER="9 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" ATTDECLTYP="1" ATTVALUE="&apos;Y-m-d\TH:i:sO&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="CHAR20" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " R3RELEASE="731" TYPESRC_LENG="0 "/>
+  <attribute CLSNAME="ZCL_DATETIME" CMPNAME="DATE_RFC1036" VERSION="1" LANGU="E" DESCRIPT="RFC 1036 (example: Mon, 15 Aug 05 15:52:01 +0000)" EXPOSURE="2" STATE="1" EDITORDER="12 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" ATTDECLTYP="1" ATTVALUE="&apos;D, d M y H:i:s O&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="CHAR20" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " R3RELEASE="731" TYPESRC_LENG="0 "/>
+  <attribute CLSNAME="ZCL_DATETIME" CMPNAME="DATE_RFC1123" VERSION="1" LANGU="E" DESCRIPT="RFC 1123 (example: Mon, 15 Aug 2005 15:52:01 +0000)" EXPOSURE="2" STATE="1" EDITORDER="13 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" ATTDECLTYP="1" ATTVALUE="&apos;D, d M Y H:i:s O&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="CHAR20" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " R3RELEASE="731" TYPESRC_LENG="0 "/>
+  <attribute CLSNAME="ZCL_DATETIME" CMPNAME="DATE_RFC2822" VERSION="1" LANGU="E" DESCRIPT="RFC 2822 (Mon, 15 Aug 2005 15:52:01 +0000)" EXPOSURE="2" STATE="1" EDITORDER="14 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" ATTDECLTYP="1" ATTVALUE="&apos;D, d M Y H:i:s O&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="CHAR20" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " R3RELEASE="731" TYPESRC_LENG="0 "/>
+  <attribute CLSNAME="ZCL_DATETIME" CMPNAME="DATE_RFC3339" VERSION="1" LANGU="E" DESCRIPT="Same as DATE_ATOM" EXPOSURE="2" STATE="1" EDITORDER="15 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" ATTDECLTYP="1" ATTVALUE="&apos;Y-m-d\TH:i:sP&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="CHAR20" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " R3RELEASE="731" TYPESRC_LENG="0 "/>
+  <attribute CLSNAME="ZCL_DATETIME" CMPNAME="DATE_RFC822" VERSION="1" LANGU="E" DESCRIPT="RFC 822 (example: Mon, 15 Aug 05 15:52:01 +0000)" EXPOSURE="2" STATE="1" EDITORDER="10 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" ATTDECLTYP="1" ATTVALUE="&apos;D, d M y H:i:s O&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="CHAR20" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " R3RELEASE="731" TYPESRC_LENG="0 "/>
+  <attribute CLSNAME="ZCL_DATETIME" CMPNAME="DATE_RFC850" VERSION="1" LANGU="E" DESCRIPT="RFC 850 (example: Monday, 15-Aug-05 15:52:01 UTC)" EXPOSURE="2" STATE="1" EDITORDER="11 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" ATTDECLTYP="1" ATTVALUE="&apos;l, d-M-y H:i:s T&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="CHAR20" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " R3RELEASE="731" TYPESRC_LENG="0 "/>
+  <attribute CLSNAME="ZCL_DATETIME" CMPNAME="DATE_RSS" VERSION="1" LANGU="E" DESCRIPT="RSS (Mon, 15 Aug 2005 15:52:01 +0000)" EXPOSURE="2" STATE="1" EDITORDER="16 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" ATTDECLTYP="1" ATTVALUE="&apos;D, d M Y H:i:s O&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="CHAR20" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " R3RELEASE="731" TYPESRC_LENG="0 "/>
+  <attribute CLSNAME="ZCL_DATETIME" CMPNAME="DATE_W3C" VERSION="1" LANGU="E" DESCRIPT="World Wide Web  (example: 2005-08-15T15:52:01+00:00)" EXPOSURE="2" STATE="1" EDITORDER="17 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" ATTDECLTYP="1" ATTVALUE="&apos;Y-m-d\TH:i:sP&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="CHAR20" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " R3RELEASE="731" TYPESRC_LENG="0 "/>
+  <attribute CLSNAME="ZCL_DATETIME" CMPNAME="_DATE" VERSION="1" LANGU="E" DESCRIPT="Date" EXPOSURE="0" STATE="1" EDITORDER="5 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="DATS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " R3RELEASE="731" TYPESRC_LENG="0 "/>
+  <attribute CLSNAME="ZCL_DATETIME" CMPNAME="_FORMAT" VERSION="1" LANGU="E" DESCRIPT="current format for output" EXPOSURE="0" STATE="1" EDITORDER="18 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="CHAR20" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " R3RELEASE="731" TYPESRC_LENG="0 "/>
+  <attribute CLSNAME="ZCL_DATETIME" CMPNAME="_TIME" VERSION="1" LANGU="E" DESCRIPT="Field of type TIMS" EXPOSURE="0" STATE="1" EDITORDER="4 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TIMS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " R3RELEASE="731" TYPESRC_LENG="0 "/>
+  <attribute CLSNAME="ZCL_DATETIME" CMPNAME="_TIMESTAMP" VERSION="1" LANGU="E" DESCRIPT="UTC Time Stamp (long form)" EXPOSURE="0" STATE="1" EDITORDER="6 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TIMESTAMPL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " R3RELEASE="731" TYPESRC_LENG="0 "/>
+  <attribute CLSNAME="ZCL_DATETIME" CMPNAME="_TS" VERSION="1" LANGU="E" DESCRIPT="time split into elements" EXPOSURE="0" STATE="1" EDITORDER="2 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="DT_SPLIT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " R3RELEASE="731" TYPESRC_LENG="0 "/>
+  <attribute CLSNAME="ZCL_DATETIME" CMPNAME="_TZ" VERSION="1" LANGU="E" DESCRIPT="timezone" EXPOSURE="0" STATE="1" EDITORDER="1 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" ATTDECLTYP="0" ATTVALUE="&apos;UTC&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TZNZONE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " R3RELEASE="731" TYPESRC_LENG="0 "/>
+  <attribute CLSNAME="ZCL_DATETIME" CMPNAME="_WEEK" VERSION="1" LANGU="E" DESCRIPT="iso-8601 week number" EXPOSURE="0" STATE="1" EDITORDER="3 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="NUM2" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " R3RELEASE="731" TYPESRC_LENG="0 "/>
+  <method CLSNAME="ZCL_DATETIME" CMPNAME="ADD" VERSION="1" LANGU="E" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" R3RELEASE="731" BCMTDCAT="00" BCMTDSYN="0">
+   <source>method ADD.
+endmethod.</source>
+  </method>
+  <method CLSNAME="ZCL_DATETIME" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="E" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" MTDTYPE="2" MTDDECLTYP="0" R3RELEASE="731" BCMTDCAT="00" BCMTDSYN="0">
+   <parameter CLSNAME="ZCL_DATETIME" CMPNAME="CONSTRUCTOR" SCONAME="TIMESTAMP" VERSION="1" LANGU="E" DESCRIPT="UTC Time Stamp in Short Form (YYYYMMDDhhmmss)" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TIMESTAMP" PAROPTIONL="X"/>
+   <parameter CLSNAME="ZCL_DATETIME" CMPNAME="CONSTRUCTOR" SCONAME="TIMEZONE" VERSION="1" LANGU="E" DESCRIPT="Time Zone" CMPTYPE="1" MTDTYPE="2" EDITORDER="2 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TZNZONE" PAROPTIONL="X"/>
+   <source>METHOD constructor.
+*!--------------------------------------------------------------------+
+*! This code has been supplied by Nigel James of Square Cloud Pty Ltd
+*! It has been released to the public domain and is available to use.
+*! Please contact nigel.james@squarecloud.com.au for more information
+*!--------------------------------------------------------------------+
+
+  IF timezone IS SUPPLIED.
+    set_timezone( timezone ).
+  ENDIF.
+
+  set_timestamp( timestamp ).
+ENDMETHOD.</source>
+  </method>
+  <method CLSNAME="ZCL_DATETIME" CMPNAME="CREATE_FROM_FORMAT" VERSION="1" LANGU="E" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" R3RELEASE="731" BCMTDCAT="00" BCMTDSYN="0">
+   <source>method CREATE_FROM_FORMAT.
+endmethod.</source>
+  </method>
+  <method CLSNAME="ZCL_DATETIME" CMPNAME="DIFF" VERSION="1" LANGU="E" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" R3RELEASE="731" BCMTDCAT="00" BCMTDSYN="0">
+   <source>method DIFF.
+endmethod.</source>
+  </method>
+  <method CLSNAME="ZCL_DATETIME" CMPNAME="FORMAT" VERSION="1" LANGU="E" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" R3RELEASE="731" BCMTDCAT="00" BCMTDSYN="0">
+   <parameter CLSNAME="ZCL_DATETIME" CMPNAME="FORMAT" SCONAME="FORMAT_MASK" VERSION="1" LANGU="E" DESCRIPT="format mask to format the time" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR20"/>
+   <parameter CLSNAME="ZCL_DATETIME" CMPNAME="FORMAT" SCONAME="RETURN" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+   <source>method FORMAT.
+
+*  the aim here is to format the timestamp with the format mask that is passed to this method.
+* see class CL_ABAP_TSTMP and CL_ABAP_DATFM
+* the formatting characters are taken from
+* http://php.net/manual/en/function.date.php which are pretty standard from unix
+
+  data: len type i
+      , buffer(60) type c
+      , counter type i
+      , char type c
+      , tmp type string
+      , month type string
+      .
+
+
+  len = strlen( format_mask ).
+  counter = 0.
+
+  do len times.
+
+    char = format_mask+counter(1).
+
+    case char.
+**    year
+      when &apos;Y&apos;. &quot; four year date
+        concatenate buffer _ts-year into buffer.
+
+      when &apos;y&apos;. &quot;two year date
+        concatenate buffer _ts-year+2(2) into buffer.
+*     o and L not yet implemented
+
+**    month
+      when &apos;m&apos;. &quot; numeric month with leading zeros
+        concatenate buffer _ts-month into buffer.
+
+*       F, M, n, t not yet implemented
+      when &apos;M&apos;. &quot; three letter month
+        month = get_month( iv_month = _ts-month iv_chars = 3 ).
+        concatenate buffer month into buffer.
+
+
+**    day
+      when &apos;d&apos;. &quot; numeric day with leading zeros
+        concatenate buffer _ts-day into buffer.
+
+*      D, j, l, N, S, w, z not yet implemented
+
+**    week
+      when &apos;W&apos;. &quot; ISO-8601 week number of year, weeks starting on Monday
+        concatenate buffer _week into buffer.
+
+**    hour
+      when &apos;H&apos;. &quot;24 hour time with leading zeros
+        concatenate buffer _ts-hour into buffer.
+
+      when &apos;a&apos; or &apos;A&apos;. &quot; am or pm
+        if _ts-hour &lt; 12.
+          tmp = &apos;am&apos;.
+        else.
+          tmp = &apos;pm&apos;.
+        endif.
+        if char = &apos;A&apos;.
+          translate tmp to upper case.
+        endif.
+        concatenate buffer tmp into buffer.
+
+*     g, G, h, not yet implemented
+
+**    minute
+      when &apos;i&apos;. &quot;minutes with leading zeros
+        concatenate buffer _ts-min into buffer.
+
+**    second
+      when &apos;s&apos;. &quot;seconds with leading zeros
+        concatenate buffer _ts-sec into buffer.
+
+**    subsecond
+      when &apos;u&apos;. &quot;sub second part of timestamp
+        concatenate buffer _ts-subsec into buffer.
+
+**    timezone
+      when &apos;P&apos;. &quot;timezone offset in hours and minutes eg +10:00
+        tmp = get_timezone_offset( ).
+        concatenate buffer tmp into buffer.
+
+      when &apos;T&apos;. &quot;timezone name from table ttzz
+        concatenate buffer _tz into buffer.
+
+
+**    space handling
+      when space. &quot; insert a &apos;~&apos; into buffer and remove at end
+        concatenate buffer &apos;~&apos; into buffer.
+
+**    escape character \
+      when &apos;\&apos;.
+        counter = counter + 1.
+        char = format_mask+counter(1).
+        concatenate buffer char into buffer.
+
+**    default
+      when others.
+        concatenate buffer char into buffer.
+    endcase.
+
+    counter = counter + 1.
+  enddo.
+
+*  replace all occurrences of &apos;~&apos; in buffer with &apos; &apos; in character mode.
+  translate buffer using &apos;~ &apos;.
+
+
+*  concatenate &apos;year &apos;  _ts-year &apos;month &apos;  _ts-month &apos;day &apos;  _ts-day
+*    &apos;hour &apos;  _ts-hour &apos;min &apos;  _ts-min &apos;sec &apos;  _ts-sec
+*    into return.
+
+  return  = buffer.
+
+endmethod.</source>
+  </method>
+  <method CLSNAME="ZCL_DATETIME" CMPNAME="GET_MONTH" VERSION="1" LANGU="E" EXPOSURE="0" STATE="1" EDITORDER="17 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" R3RELEASE="731" BCMTDCAT="00" BCMTDSYN="0">
+   <parameter CLSNAME="ZCL_DATETIME" CMPNAME="GET_MONTH" SCONAME="IV_MONTH" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABSGR"/>
+   <parameter CLSNAME="ZCL_DATETIME" CMPNAME="GET_MONTH" SCONAME="IV_CHARS" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="3"/>
+   <parameter CLSNAME="ZCL_DATETIME" CMPNAME="GET_MONTH" SCONAME="RV_MONTH" VERSION="1" LANGU="E" DESCRIPT="Three-digit character field for IDocs" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+   <source>METHOD get_month.
+  DATA:
+        month TYPE monam
+      .
+
+  SELECT SINGLE monam
+    INTO month
+    FROM t015m
+    WHERE spras = sy-langu
+     AND monum = iv_month.
+
+  IF iv_chars IS NOT SUPPLIED OR iv_chars = 0.
+    rv_month = month.
+  ELSE.
+    rv_month = month(iv_chars).
+  ENDIF.
+
+
+ENDMETHOD.</source>
+  </method>
+  <method CLSNAME="ZCL_DATETIME" CMPNAME="GET_OFFSET" VERSION="1" LANGU="E" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" R3RELEASE="731" BCMTDCAT="00" BCMTDSYN="0">
+   <source>method GET_OFFSET.
+endmethod.</source>
+  </method>
+  <method CLSNAME="ZCL_DATETIME" CMPNAME="GET_TIMESTAMP" VERSION="1" LANGU="E" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" R3RELEASE="731" BCMTDCAT="00" BCMTDSYN="0">
+   <source>method GET_TIMESTAMP.
+endmethod.</source>
+  </method>
+  <method CLSNAME="ZCL_DATETIME" CMPNAME="GET_TIMEZONE" VERSION="1" LANGU="E" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" R3RELEASE="731" BCMTDCAT="00" BCMTDSYN="0">
+   <source>method GET_TIMEZONE.
+endmethod.</source>
+  </method>
+  <method CLSNAME="ZCL_DATETIME" CMPNAME="GET_TIMEZONE_OFFSET" VERSION="1" LANGU="E" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" R3RELEASE="731" BCMTDCAT="00" BCMTDSYN="0">
+   <parameter CLSNAME="ZCL_DATETIME" CMPNAME="GET_TIMEZONE_OFFSET" SCONAME="FORMAT_MASK" VERSION="1" LANGU="E" DESCRIPT="type of offset" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="C" PARVALUE="&apos;P&apos;"/>
+   <parameter CLSNAME="ZCL_DATETIME" CMPNAME="GET_TIMEZONE_OFFSET" SCONAME="RETURN" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+   <source>method GET_TIMEZONE_OFFSET.
+
+  types: begin of diff_ty
+       , utcsign type TZNUTCSIGN
+       , utcdiff TYPE tznutcdiff
+       , end of diff_ty
+       .
+
+
+  DATA: diff TYPE diff_ty
+      .
+
+  SELECT SINGLE r~utcsign r~utcdiff
+  FROM ( ttzz AS z INNER JOIN ttzr AS r ON z~zonerule = r~zonerule )
+  INTO  diff
+  WHERE z~tzone = me-&gt;_tz.
+
+** only working for atom type right now - this needs to change for other expressions of timezone.
+  concatenate diff-utcsign diff-utcdiff+0(2) &apos;:&apos; diff-utcdiff+2(2) into return.
+
+endmethod.</source>
+  </method>
+  <method CLSNAME="ZCL_DATETIME" CMPNAME="MODIFY" VERSION="1" LANGU="E" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" R3RELEASE="731" BCMTDCAT="00" BCMTDSYN="0">
+   <source>method MODIFY.
+endmethod.</source>
+  </method>
+  <method CLSNAME="ZCL_DATETIME" CMPNAME="README" VERSION="1" LANGU="E" DESCRIPT="Read me for information about this class" EXPOSURE="0" STATE="1" EDITORDER="18 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" R3RELEASE="731" BCMTDCAT="00" BCMTDSYN="0">
+   <source>method README.
+
+*!--------------------------------------------------------------------+
+*! This code has been supplied by Nigel James of Square Cloud Pty Ltd
+*! It has been released to the public domain and is available to use.
+*! Please contact nigel.james@squarecloud.com.au for updates or
+*! more information
+*!--------------------------------------------------------------------+
+
+endmethod.</source>
+  </method>
+  <method CLSNAME="ZCL_DATETIME" CMPNAME="SET_DATE" VERSION="1" LANGU="E" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" R3RELEASE="731" BCMTDCAT="00" BCMTDSYN="0">
+   <parameter CLSNAME="ZCL_DATETIME" CMPNAME="SET_DATE" SCONAME="DATE" VERSION="1" LANGU="E" DESCRIPT="Field of type DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS"/>
+   <source>method SET_DATE.
+  _date = date.
+endmethod.</source>
+  </method>
+  <method CLSNAME="ZCL_DATETIME" CMPNAME="SET_ISODATE" VERSION="1" LANGU="E" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" R3RELEASE="731" BCMTDCAT="00" BCMTDSYN="0">
+   <source>method SET_ISODATE.
+endmethod.</source>
+  </method>
+  <method CLSNAME="ZCL_DATETIME" CMPNAME="SET_TIME" VERSION="1" LANGU="E" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" R3RELEASE="731" BCMTDCAT="00" BCMTDSYN="0">
+   <parameter CLSNAME="ZCL_DATETIME" CMPNAME="SET_TIME" SCONAME="TIME" VERSION="1" LANGU="E" DESCRIPT="Field of type TIMS" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TIMS"/>
+   <source>method SET_TIME.
+  _time = time.
+endmethod.</source>
+  </method>
+  <method CLSNAME="ZCL_DATETIME" CMPNAME="SET_TIMESTAMP" VERSION="1" LANGU="E" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" R3RELEASE="731" BCMTDCAT="00" BCMTDSYN="0">
+   <parameter CLSNAME="ZCL_DATETIME" CMPNAME="SET_TIMESTAMP" SCONAME="TIMESTAMP" VERSION="1" LANGU="E" DESCRIPT="UTC Time Stamp in Long Form (YYYYMMDDhhmmssmmmuuun)" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDBY="NJJ719" CHANGEDON="20130522" PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TIMESTAMP" PAROPTIONL="X"/>
+   <source>method SET_TIMESTAMP.
+
+  if me-&gt;_tz is initial.
+    set_timezone( ).
+  endif.
+
+* by default create the timestamp as it is now
+  if timestamp is not supplied.
+    get time stamp field me-&gt;_timestamp.
+  else.
+    _timestamp = timestamp.
+  endif.
+
+  convert time stamp me-&gt;_timestamp time zone me-&gt;_tz into date me-&gt;_date  time me-&gt;_time.
+
+  me-&gt;_ts = me-&gt;_date.
+  me-&gt;_ts+8 = me-&gt;_time.
+
+endmethod.</source>
+  </method>
+  <method CLSNAME="ZCL_DATETIME" CMPNAME="SET_TIMEZONE" VERSION="1" LANGU="E" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" R3RELEASE="731" BCMTDCAT="00" BCMTDSYN="0">
+   <parameter CLSNAME="ZCL_DATETIME" CMPNAME="SET_TIMEZONE" SCONAME="TIMEZONE" VERSION="1" LANGU="E" DESCRIPT="Time Zone" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TZNZONE" PARVALUE="&apos;UTC&apos;"/>
+   <source>method SET_TIMEZONE.
+
+  if timezone is not supplied.
+    me-&gt;_tz = &apos;UTC&apos;.
+  else.
+    me-&gt;_tz = timezone.
+  endif.
+
+endmethod.</source>
+  </method>
+  <method CLSNAME="ZCL_DATETIME" CMPNAME="SUB" VERSION="1" LANGU="E" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " AUTHOR="NJJ719" CREATEDON="20130522" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" R3RELEASE="731" BCMTDCAT="00" BCMTDSYN="0">
+   <source>method SUB.
+endmethod.</source>
+  </method>
+ </CLAS>
+</nugget>
